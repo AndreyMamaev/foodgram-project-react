@@ -1,90 +1,110 @@
+from django.shortcuts import get_object_or_404
 from django.http import HttpResponse
-from rest_framework import viewsets, serializers, filters, permissions
+from django.db.models import Sum
+from rest_framework import viewsets, filters, permissions
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
 
 from .mixins import RetrieveListViewSet
-from .serializers import IngredientsSerializer, TagsSerializer, RecipesSerializer
+from .serializers import (
+    FavoriteSerializer, IngredientsSerializer, TagsSerializer,
+    RecipesSerializer, CartSerializer
+)
 from .permissions import IsAuthorOrReadOnly
 from .filters import RecipeFilter
-from recipes.models import Ingredient, Tag, Recipe, Favorite, Cart, IngredientRecipe
+from recipes.models import (
+    Ingredient, Tag, Recipe,
+    Favorite, Cart, IngredientRecipe
+)
+from .utils import ingredients_to_txt
 
 
 class IngredientsViewSet(RetrieveListViewSet):
-    '''Вьюсет жанров.'''
+    """Вьюсет ингредиентов."""
     queryset = Ingredient.objects.all()
     serializer_class = IngredientsSerializer
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
     pagination_class = None
 
+
 class TagsViewSet(RetrieveListViewSet):
-    '''Вьюсет жанров.'''
+    """Вьюсет тэгов."""
     queryset = Tag.objects.all()
     serializer_class = TagsSerializer
     pagination_class = None
     lookup_field = 'name'
 
+
 class RecipesViewSet(viewsets.ModelViewSet):
-    '''Вьюсет жанров.'''
+    """Вьюсет рецептов."""
     queryset = Recipe.objects.all()
-    permission_classes = (IsAuthorOrReadOnly, permissions.IsAuthenticatedOrReadOnly)
+    permission_classes = (
+        IsAuthorOrReadOnly,
+        permissions.IsAuthenticatedOrReadOnly
+    )
     serializer_class = RecipesSerializer
     filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeFilter
 
-    @action(detail=True, methods=['POST', 'DELETE'])
+    @action(detail=True, methods=['POST',])
     def favorite(self, request, pk):
-        recipe = Recipe.objects.get(id=pk)
-        exist = Favorite.objects.filter(favorite_recipe=recipe, user=request.user).exists()
-        if request.method == 'POST':
-            if exist:
-                raise serializers.ValidationError(
-                    "Рецепт уже в избранном!"
-                    )
-            Favorite.objects.create(favorite_recipe=recipe, user=request.user)
-        elif request.method == 'DELETE':
-            if not exist:
-                raise serializers.ValidationError(
-                    "Рецепт не в избранном!"
-                    )
-            Favorite.objects.get(favorite_recipe=recipe, user=request.user).delete()
-        return Response(self.get_serializer(recipe).data)
+        favorite_recipe = get_object_or_404(Recipe, id=pk)
+        data = {'favorite_recipe': pk, 'user': request.user.id}
+        serializer = FavoriteSerializer(
+            data=data,
+            context={'request': request}
+        )
+        if serializer.is_valid(raise_exception=True):
+            Favorite.objects.create(favorite_recipe=favorite_recipe, user=request.user)
+        return Response(self.get_serializer(favorite_recipe).data)
     
-    @action(detail=True, methods=['POST', 'DELETE'])
+    @favorite.mapping.delete
+    def favorite_delete(self, request, pk):
+        favorite_recipe = get_object_or_404(Recipe, id=pk)
+        data = {'favorite_recipe': pk, 'user': request.user.id}
+        serializer = FavoriteSerializer(
+            data=data,
+            context={'request': request}
+        )
+        if serializer.is_valid(raise_exception=True):
+            get_object_or_404(
+                Favorite, favorite_recipe=favorite_recipe, user=request.user
+            ).delete()
+        return Response(self.get_serializer(favorite_recipe).data)
+    
+    @action(detail=True, methods=['POST',])
     def shopping_cart(self, request, pk):
-        recipe = Recipe.objects.get(id=pk)
-        exist = Cart.objects.filter(added_to_cart_recipe=recipe, user=request.user).exists()
-        if request.method == 'POST':
-            if exist:
-                raise serializers.ValidationError(
-                    "Рецепт уже в корзине!"
-                    )
-            Cart.objects.create(added_to_cart_recipe=recipe, user=request.user)
-        elif request.method == 'DELETE':
-            if not exist:
-                raise serializers.ValidationError(
-                    "Рецепт не в корзине!"
-                    )
-            Cart.objects.get(added_to_cart_recipe=recipe, user=request.user).delete()
-        return Response(self.get_serializer(recipe).data)
+        added_to_cart_recipe = get_object_or_404(Recipe, id=pk)
+        data = {'added_to_cart_recipe': pk, 'user': request.user.id}
+        serializer = CartSerializer(
+            data=data,
+            context={'request': request}
+        )
+        if serializer.is_valid(raise_exception=True):
+            Cart.objects.create(added_to_cart_recipe=added_to_cart_recipe, user=request.user)
+        return Response(self.get_serializer(added_to_cart_recipe).data)
+    
+    @shopping_cart.mapping.delete
+    def shopping_cart_delete(self, request, pk):
+        added_to_cart_recipe = get_object_or_404(Recipe, id=pk)
+        data = {'added_to_cart_recipe': pk, 'user': request.user.id}
+        serializer = CartSerializer(
+            data=data,
+            context={'request': request}
+        )
+        if serializer.is_valid(raise_exception=True):
+            get_object_or_404(Cart, added_to_cart_recipe=added_to_cart_recipe, user=request.user).delete()
+        return Response(self.get_serializer(added_to_cart_recipe).data)
     
     @action(detail=False,)
     def download_shopping_cart(self, request):
-        spisok = {}
-        carts = Cart.objects.filter(user=request.user)
-        for cart in carts:
-            recipe = cart.added_to_cart_recipe
-            ingredients = recipe.ingredients.all()
-            for ingredient in ingredients:
-                l = IngredientRecipe.objects.get(recipe=recipe, ingredient=ingredient)
-                name = l.ingredient.name + ' (' + l.ingredient.measurement_unit + ')'
-                if name not in spisok:
-                    spisok[name] = l.amount
-                else:
-                    spisok[name] += l.amount
-        content = ''
-        for key in spisok:
-            content += key + ' - ' + str(spisok[key]) + '\n'
-        return HttpResponse(content, content_type='text/plain')
+        ingredients = IngredientRecipe.objects.filter(
+            recipe__added_to_cart_recipe__user=request.user
+        ).values(
+            'ingredient__name',
+            'ingredient__measurement_unit'
+        ).annotate(sum=Sum('amount'))
+        shopping_list = ingredients_to_txt(ingredients)
+        return HttpResponse(shopping_list, content_type='text/plain')

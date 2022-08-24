@@ -6,16 +6,19 @@ from recipes.models import Recipe
 
 
 class RecipesFollowSerializer(serializers.ModelSerializer):
-    '''Сериалайзер рецептов для страницы подписок.'''
+    """Сериалайзер рецептов для страницы подписок."""
     image = Base64ImageField()
+
 
     class Meta:
         model = Recipe
         fields = ('id', 'name', 'image', 'cooking_time')
 
+
 class UserSerializer(serializers.ModelSerializer):
-    '''Сериалайзер пользователей.'''
+    """Сериалайзер пользователей."""
     is_subsсribed = serializers.SerializerMethodField()
+
 
     class Meta:
         model = User
@@ -28,16 +31,19 @@ class UserSerializer(serializers.ModelSerializer):
             'email': {'required': True}
         }
 
+
     def get_is_subsсribed(self, obj):
         request = self.context.get('request')
         if request.user.is_anonymous:
             return False
         return Follow.objects.filter(user=request.user, author=obj).exists()
 
-class FollowSerializer(UserSerializer):
-    '''Сериалайзер подписок.'''
+
+class FollowUserSerializer(UserSerializer):
+    """Сериалайзер пользователей в подписках."""
     recipes = RecipesFollowSerializer(many=True, read_only=True)
     recipes_count = serializers.SerializerMethodField()
+
 
     class Meta:
         model = User
@@ -51,7 +57,38 @@ class FollowSerializer(UserSerializer):
             'email': {'required': True}
         }
     
+
     def get_recipes_count(self, obj):
         return Recipe.objects.filter(author=obj).count()
-        
 
+
+class FollowSerializer(UserSerializer):
+    """Сериалайзер подписок."""
+
+
+    class Meta:
+        model = Follow
+        fields = (
+            'user',
+            'author'
+        )
+    
+
+    def validate(self, data):
+        author = data.get('author')
+        user = data.get('user')
+        if user == author:
+            raise serializers.ValidationError(
+                'Нельзя подписаться на самого себя!'
+            )
+        exist = Follow.objects.filter(author=author, user=user).exists()
+        request = self.context.get('request')
+        if request.method == 'POST' and exist:
+            raise serializers.ValidationError(
+                'Вы уже подписаны на автора!'
+            )
+        if request.method == 'DELETE' and not exist:
+            raise serializers.ValidationError(
+                'Вы не подписаны на автора!'
+                )
+        return data
