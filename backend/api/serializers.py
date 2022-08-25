@@ -8,43 +8,47 @@ from recipes.models import (
 from users.serializers import UserSerializer
 
 
-class IngredientsSerializer(serializers.ModelSerializer):
+class IngredientSerializer(serializers.ModelSerializer):
     """Сериалайзер ингредиентов."""
+
     class Meta:
         model = Ingredient
         fields = ('id', 'name', 'measurement_unit')
 
 
-class IngredientsRecipeSerializer(serializers.ModelSerializer):
+class IngredientRecipeSerializer(serializers.ModelSerializer):
     """Сериалайзер ингредиентов рецепта."""
-    id = serializers.PrimaryKeyRelatedField(source='ingredient.id', read_only='True')
-    name = serializers.StringRelatedField(source='ingredient.name', read_only='True')
-    measurement_unit = serializers.StringRelatedField(source='ingredient.measurement_unit', read_only='True')
-
+    id = serializers.PrimaryKeyRelatedField(
+        source='ingredient.id', read_only='True'
+    )
+    name = serializers.StringRelatedField(
+        source='ingredient.name', read_only='True'
+    )
+    measurement_unit = serializers.StringRelatedField(
+        source='ingredient.measurement_unit', read_only='True'
+    )
 
     class Meta:
         model = IngredientRecipe
         fields = ('id', 'name', 'measurement_unit', 'amount')
 
 
-class TagsSerializer(serializers.ModelSerializer):
+class TagSerializer(serializers.ModelSerializer):
     """Сериалайзер тэгов."""
-
 
     class Meta:
         model = Tag
         fields = ('id', 'name', 'color', 'slug')
 
 
-class RecipesSerializer(serializers.ModelSerializer):
+class RecipeSerializer(serializers.ModelSerializer):
     """Сериалайзер рецептов."""
     author = UserSerializer(many=False, read_only=True)
-    tags = TagsSerializer(many=True, read_only=True)
+    tags = TagSerializer(many=True, read_only=True)
     ingredients = serializers.SerializerMethodField()
     is_favorited = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
     image = Base64ImageField()
-
 
     class Meta:
         model = Recipe
@@ -53,10 +57,9 @@ class RecipesSerializer(serializers.ModelSerializer):
             'is_in_shopping_cart', 'name', 'image', 'text', 'cooking_time'
         )
     
-
     def get_ingredients(self, obj):
         ingredients =  IngredientRecipe.objects.filter(recipe=obj)
-        serializer = IngredientsRecipeSerializer(ingredients, many=True)
+        serializer = IngredientRecipeSerializer(ingredients, many=True)
         return serializer.data
     
     def get_is_favorited(self, obj):
@@ -135,14 +138,12 @@ class RecipesSerializer(serializers.ModelSerializer):
 class FavoriteSerializer(UserSerializer):
     """Сериалайзер избранного."""
 
-
     class Meta:
         model = Favorite
         fields = (
             'user',
             'favorite_recipe'
         )
-    
 
     def validate(self, data):
         favorite_recipe = data.get('favorite_recipe')
@@ -165,14 +166,12 @@ class FavoriteSerializer(UserSerializer):
 class CartSerializer(UserSerializer):
     """Сериалайзер корзины."""
 
-
     class Meta:
         model = Cart
         fields = (
             'user',
             'added_to_cart_recipe'
         )
-    
 
     def validate(self, data):
         added_to_cart_recipe = data.get('added_to_cart_recipe')

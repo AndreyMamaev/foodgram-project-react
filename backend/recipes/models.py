@@ -14,7 +14,6 @@ class Ingredient(models.Model):
         max_length=10
     )
 
-
     class Meta:
         verbose_name = 'Ингредиент'
         verbose_name_plural = 'Ингредиенты'
@@ -30,7 +29,6 @@ class Tag(models.Model):
         'Slug',
         help_text='Введите slug'
     )
-
 
     class Meta:
         verbose_name = 'Тэг'
@@ -71,13 +69,11 @@ class Recipe(models.Model):
         db_index=True,
     )
 
-
     class Meta:
         verbose_name = 'Рецепт'
         verbose_name_plural = 'Рецепты'
         ordering = ['-pub_date']
     
-
     def __str__(self):
         return self.text[:15]
 
@@ -92,11 +88,10 @@ class IngredientRecipe(models.Model):
         on_delete=models.CASCADE,
         related_name='recipe_ingredients'
     )
-    amount = models.IntegerField(
+    amount = models.PositiveSmallIntegerField(
         'Количество',
         help_text='Введите количество'
     )
-
 
     class Meta:
         verbose_name = 'Ингредиент в рецепте'
@@ -111,7 +106,6 @@ class IngredientRecipe(models.Model):
 class TagRecipe(models.Model):
     tag = models.ForeignKey(Tag, on_delete=models.CASCADE)
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
-
 
     class Meta:
         verbose_name = 'Тэг рецепта'
@@ -139,7 +133,6 @@ class Favorite(models.Model):
         help_text='Задаётся рецепт который добавили в избранное'
     )
 
-
     class Meta:
         verbose_name = 'Рецепт в избранном пользователя'
         verbose_name_plural = 'Рецепты в избранном пользователя'
@@ -165,7 +158,6 @@ class Cart(models.Model):
         verbose_name='Рецепт добавленный в корзину',
         help_text='Задаётся рецепт который добавили в корзину'
     )
-
 
     class Meta:
         verbose_name = 'Рецепт в корзине пользователя'

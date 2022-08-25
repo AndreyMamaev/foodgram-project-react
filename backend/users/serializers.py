@@ -5,10 +5,9 @@ from users.models import User, Follow
 from recipes.models import Recipe
 
 
-class RecipesFollowSerializer(serializers.ModelSerializer):
+class RecipeFollowSerializer(serializers.ModelSerializer):
     """Сериалайзер рецептов для страницы подписок."""
     image = Base64ImageField()
-
 
     class Meta:
         model = Recipe
@@ -18,7 +17,6 @@ class RecipesFollowSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     """Сериалайзер пользователей."""
     is_subsсribed = serializers.SerializerMethodField()
-
 
     class Meta:
         model = User
@@ -31,7 +29,6 @@ class UserSerializer(serializers.ModelSerializer):
             'email': {'required': True}
         }
 
-
     def get_is_subsсribed(self, obj):
         request = self.context.get('request')
         if request.user.is_anonymous:
@@ -41,9 +38,8 @@ class UserSerializer(serializers.ModelSerializer):
 
 class FollowUserSerializer(UserSerializer):
     """Сериалайзер пользователей в подписках."""
-    recipes = RecipesFollowSerializer(many=True, read_only=True)
+    recipes = RecipeFollowSerializer(many=True, read_only=True)
     recipes_count = serializers.SerializerMethodField()
-
 
     class Meta:
         model = User
@@ -56,7 +52,6 @@ class FollowUserSerializer(UserSerializer):
             'password': {'required': False},
             'email': {'required': True}
         }
-    
 
     def get_recipes_count(self, obj):
         return Recipe.objects.filter(author=obj).count()
@@ -64,7 +59,6 @@ class FollowUserSerializer(UserSerializer):
 
 class FollowSerializer(UserSerializer):
     """Сериалайзер подписок."""
-
 
     class Meta:
         model = Follow

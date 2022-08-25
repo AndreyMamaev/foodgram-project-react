@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django_admin_display import admin_display
 
 from .models import IngredientRecipe, Recipe, Ingredient, Tag, TagRecipe
 
@@ -10,6 +11,9 @@ class RecipeAdmin(admin.ModelAdmin):
     list_filter = ('name', 'author', 'tags','pub_date',)
     readonly_fields = ('count_favorites',)
 
+    @admin_display(
+        short_description='Количество добавлений в избранное',
+    )
     def count_favorites(self, obj):
         return obj.favorite_recipe.count()
 

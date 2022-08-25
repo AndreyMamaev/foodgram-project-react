@@ -7,7 +7,7 @@ from .models import User, Follow
 from .serializers import UserSerializer, FollowSerializer, FollowUserSerializer
 
     
-class UsersViewSet(UserViewSet):
+class CustomUserViewSet(UserViewSet):
     """Вьюсет пользователей."""
     queryset = User.objects.all()
     serializer_class = UserSerializer
@@ -31,19 +31,18 @@ class UsersViewSet(UserViewSet):
             data=data,
             context={'request': request}
         )
-        if serializer.is_valid(raise_exception=True):
-            Follow.objects.create(author=author, user=request.user)
+        serializer.is_valid(raise_exception=True)
+        Follow.objects.create(author=author, user=request.user)
         return Response(FollowUserSerializer(author, context={'request': request}).data)
 
     @subscribe.mapping.delete
-    def subscribe_delete(self, request, id):
+    def unsubscribe(self, request, id):
         author = get_object_or_404(User, id=id)
         data = {'author': id, 'user': request.user.id}
         serializer = FollowSerializer(
             data=data,
             context={'request': request}
         )
-        print(serializer)
-        if serializer.is_valid(raise_exception=True):
-            get_object_or_404(Follow, author=author, user=request.user).delete()
+        serializer.is_valid(raise_exception=True)
+        get_object_or_404(Follow, author=author, user=request.user).delete()
         return Response(FollowUserSerializer(author, context={'request': request}).data)

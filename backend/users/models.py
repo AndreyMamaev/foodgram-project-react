@@ -4,7 +4,7 @@ from django.db import models
 
 
 class User(AbstractUser):
-    '''Модель пользователя.'''
+    """Модель пользователя."""
     USER = 'user'
     ADMIN = 'admin'
     CHOICES = [
