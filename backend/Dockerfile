@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY ../ .
 
-WORKDIR /app/api_yamdb
+WORKDIR /app/backend
 
 RUN python -m pip install --upgrade pip
 
