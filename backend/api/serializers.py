@@ -77,9 +77,10 @@ class RecipeSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         request = self.context.get('request')
         author=request.user
+        validated_data['author'] = author
         tags_id = self.initial_data.get('tags')
         ingredients_id = self.initial_data.get('ingredients')
-        recipe = Recipe.objects.create(author=author, **validated_data)
+        recipe = Recipe.objects.create(**validated_data)
         tags = [
             TagRecipe(
                 recipe=recipe,
@@ -117,7 +118,7 @@ class RecipeSerializer(serializers.ModelSerializer):
             ) for ingredient_id in ingredients_id
         ]
         IngredientRecipe.objects.bulk_create(ingredients)
-        return instance
+        return super().update(instance, validated_data) 
     
     def validate(self, data):
         tags_id = self.initial_data.get('tags')

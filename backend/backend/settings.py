@@ -13,6 +13,8 @@ DEBUG = os.getenv('DEBUG', default=False)
 
 ALLOWED_HOSTS = ['*']
 
+CSRF_TRUSTED_ORIGINS = ['http://localhost']
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -62,12 +64,16 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': os.getenv('DB_ENGINE', default='django.db.backends.postgresql'),
+        'NAME': os.getenv('DB_NAME', default='postgres'),
+        'USER': os.getenv('POSTGRES_USER', default='postgres'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD', default='postgres'),
+        'HOST': os.getenv('DB_HOST', default='db'),
+        'PORT': os.getenv('DB_PORT', default='5432'),
     }
 }
 
-AUTH_USER_MODEL = "users.User"
+AUTH_USER_MODEL = 'users.User'
 
 DEFAULT_AUTO_FIELD='django.db.models.AutoField'
 
@@ -102,6 +108,7 @@ REST_FRAMEWORK = {
 
 DJOSER = {
     'HIDE_USERS': False,
+    'PASSWORD_CHANGED_EMAIL_CONFIRMATION': False,
     'LOGIN_FIELD': 'email',
     'TOKEN_MODEL': 'rest_framework.authtoken.models.Token',
     'SERIALIZERS': {
@@ -125,3 +132,7 @@ USE_L10N = True
 USE_TZ = True
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media') 
