@@ -10,7 +10,7 @@ class UserAdmin(admin.ModelAdmin):
         'last_name', 'role', 'password'
     )
     search_fields = ('username', 'email', 'first_name', 'last_name')
-    list_filter = ('date_joined')
+    list_filter = ['date_joined']
 
 
 @admin.register(Follow)
