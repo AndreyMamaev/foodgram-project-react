@@ -32,17 +32,20 @@ class Migration(migrations.Migration):
                 )),
                 ('is_superuser', models.BooleanField(
                     default=False,
-                    help_text='Designates that this user has all permissions without explicitly assigning them.',
+                    help_text='Designates that this user has all '
+                    'permissions without explicitly assigning them.',
                     verbose_name='superuser status'
                 )),
                 ('is_staff', models.BooleanField(
                     default=False,
-                    help_text='Designates whether the user can log into this admin site.',
+                    help_text='Designates whether the user '
+                    'can log into this admin site.',
                     verbose_name='staff status'
                 )),
                 ('is_active', models.BooleanField(
                     default=True,
-                    help_text='Designates whether this user should be treated as active. Unselect this instead of deleting accounts.',
+                    help_text='Designates whether this user should be treated '
+                    'as active. Unselect this instead of deleting accounts.',
                     verbose_name='active'
                 )),
                 ('date_joined', models.DateTimeField(
@@ -80,7 +83,9 @@ class Migration(migrations.Migration):
                 )),
                 ('groups', models.ManyToManyField(
                     blank=True,
-                    help_text='The groups this user belongs to. A user will get all permissions granted to each of their groups.',
+                    help_text='The groups this user belongs to. '
+                    'A user will get all permissions granted '
+                    'to each of their groups.',
                     related_name='user_set', related_query_name='user',
                     to='auth.group', verbose_name='groups'
                 )),
@@ -108,13 +113,16 @@ class Migration(migrations.Migration):
                     serialize=False, verbose_name='ID'
                 )),
                 ('author', models.ForeignKey(
-                    help_text='Задаётся автоматически пользователь на записи которого подписались.',
-                    on_delete=django.db.models.deletion.CASCADE, related_name='following',
+                    help_text='Задаётся автоматически пользователь '
+                    'на записи которого подписались.',
+                    on_delete=django.db.models.deletion.CASCADE,
+                    related_name='following',
                     to=settings.AUTH_USER_MODEL,
                     verbose_name='Пользователь на которого подписались'
                 )),
                 ('user', models.ForeignKey(
-                    help_text='Задаётся автоматически аутентифицированный пользователь.',
+                    help_text='Задаётся автоматически '
+                    'аутентифицированный пользователь.',
                     on_delete=django.db.models.deletion.CASCADE,
                     related_name='follower',
                     to=settings.AUTH_USER_MODEL,

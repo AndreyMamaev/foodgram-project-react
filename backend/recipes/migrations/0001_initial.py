@@ -76,7 +76,8 @@ class Migration(migrations.Migration):
                     verbose_name='Описание'
                 )),
                 ('cooking_time', models.PositiveSmallIntegerField(
-                    db_index=True, help_text='Введите время приготовления в минутах',
+                    db_index=True,
+                    help_text='Введите время приготовления в минутах',
                     verbose_name='Время приготовления'
                 )),
                 ('pub_date', models.DateTimeField(
@@ -175,7 +176,8 @@ class Migration(migrations.Migration):
                     verbose_name='Рецепт добавленный в избранное'
                 )),
                 ('user', models.ForeignKey(
-                    help_text='Задаётся автоматически аутентифицированный пользователь.',
+                    help_text='Задаётся автоматически '
+                    'аутентифицированный пользователь.',
                     on_delete=django.db.models.deletion.CASCADE,
                     related_name='favorites',
                     to=settings.AUTH_USER_MODEL, verbose_name='Пользователь'
@@ -201,8 +203,10 @@ class Migration(migrations.Migration):
                     verbose_name='Рецепт добавленный в корзину'
                 )),
                 ('user', models.ForeignKey(
-                    help_text='Задаётся автоматически аутентифицированный пользователь.',
-                    on_delete=django.db.models.deletion.CASCADE, related_name='cart',
+                    help_text='Задаётся автоматически '
+                    'аутентифицированный пользователь.',
+                    on_delete=django.db.models.deletion.CASCADE,
+                    related_name='cart',
                     to=settings.AUTH_USER_MODEL, verbose_name='Пользователь'
                 )),
             ],

@@ -77,25 +77,31 @@ DATABASES = {
 
 AUTH_USER_MODEL = 'users.User'
 
-DEFAULT_AUTO_FIELD ='django.db.models.AutoField'
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 SILENCED_SYSTEM_CHECKS = ["models.E032"]
 
 AUTH_PASSWORD_VALIDATORS = [
-    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',},
-    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',},
-    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',},
-    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',},
+    {'NAME': 'django.contrib.auth.password_validation.'
+        'UserAttributeSimilarityValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.'
+        'MinimumLengthValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.'
+        'CommonPasswordValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.'
+        'NumericPasswordValidator'},
 ]
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticatedOrReadOnly', 
+        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
     ],
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'DEFAULT_PAGINATION_CLASS': [
+        'rest_framework.pagination.PageNumberPagination',
+    ],
     'PAGE_SIZE': 6,
 }
 
