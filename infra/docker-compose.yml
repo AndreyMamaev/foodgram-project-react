@@ -30,7 +30,7 @@ services:
       - web
 
   web:
-    image: drewnya/foodgram:latest
+    image: drewnya/foodgram_backend:latest
     restart: always
     volumes:
       - static_value:/app/static/
