@@ -1,5 +1,4 @@
 from django.db import models
-
 from users.models import User
 
 
@@ -56,7 +55,9 @@ class Recipe(models.Model):
         'Описание',
         help_text='Введите описание рецепта'
     )
-    ingredients = models.ManyToManyField(Ingredient, through='IngredientRecipe')
+    ingredients = models.ManyToManyField(
+        Ingredient, through='IngredientRecipe'
+    )
     tags = models.ManyToManyField(Tag, through='TagRecipe')
     cooking_time = models.PositiveSmallIntegerField(
         'Время приготовления',
@@ -73,7 +74,7 @@ class Recipe(models.Model):
         verbose_name = 'Рецепт'
         verbose_name_plural = 'Рецепты'
         ordering = ['-pub_date']
-    
+
     def __str__(self):
         return self.text[:15]
 

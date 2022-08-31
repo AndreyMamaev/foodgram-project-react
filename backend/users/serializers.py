@@ -1,8 +1,7 @@
-from rest_framework import serializers
 from drf_extra_fields.fields import Base64ImageField
-
-from users.models import User, Follow
 from recipes.models import Recipe
+from rest_framework import serializers
+from users.models import Follow, User
 
 
 class RecipeFollowSerializer(serializers.ModelSerializer):
@@ -21,7 +20,8 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = (
-            'email', 'id', 'username', 'first_name', 'last_name', 'is_subsсribed'
+            'email', 'id', 'username', 'first_name',
+            'last_name', 'is_subsсribed'
         )
         lookup_field = ('username',)
         extra_kwargs = {
@@ -66,7 +66,6 @@ class FollowSerializer(UserSerializer):
             'user',
             'author'
         )
-    
 
     def validate(self, data):
         author = data.get('author')

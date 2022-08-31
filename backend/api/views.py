@@ -1,22 +1,19 @@
-from django.shortcuts import get_object_or_404
-from django.http import HttpResponse
 from django.db.models import Sum
-from rest_framework import viewsets, filters, permissions
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404
+from django_filters.rest_framework import DjangoFilterBackend
+from recipes.models import (Cart, Favorite, Ingredient, IngredientRecipe,
+                            Recipe, Tag)
+from rest_framework import filters, permissions, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from django_filters.rest_framework import DjangoFilterBackend
 
-from .mixins import RetrieveListViewSet
-from .serializers import (
-    FavoriteSerializer, IngredientSerializer, TagSerializer,
-    RecipeSerializer, CartSerializer
-)
-from .permissions import IsAuthorOrReadOnly
 from .filters import RecipeFilter
-from recipes.models import (
-    Ingredient, Tag, Recipe,
-    Favorite, Cart, IngredientRecipe
-)
+from .mixins import RetrieveListViewSet
+from .permissions import IsAuthorOrReadOnly
+from .serializers import (CartSerializer, FavoriteSerializer,
+                          IngredientSerializer, RecipeSerializer,
+                          TagSerializer)
 from .utils import ingredients_to_txt
 
 
@@ -48,7 +45,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeFilter
 
-    @action(detail=True, methods=['POST',])
+    @action(detail=True, methods=['POST', ])
     def favorite(self, request, pk):
         favorite_recipe = get_object_or_404(Recipe, id=pk)
         data = {'favorite_recipe': pk, 'user': request.user.id}
@@ -62,7 +59,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
             user=request.user
         )
         return Response(self.get_serializer(favorite_recipe).data)
-    
+
     @favorite.mapping.delete
     def unfavorite(self, request, pk):
         favorite_recipe = get_object_or_404(Recipe, id=pk)
@@ -78,9 +75,9 @@ class RecipeViewSet(viewsets.ModelViewSet):
             user=request.user
         ).delete()
         return Response(self.get_serializer(favorite_recipe).data)
-    
+
     @action(
-        detail=True, methods=['POST',],
+        detail=True, methods=['POST', ],
         url_path='shopping_cart'
     )
     def add_to_shopping_cart(self, request, pk):
@@ -96,7 +93,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
             user=request.user
         )
         return Response(self.get_serializer(added_to_cart_recipe).data)
-    
+
     @add_to_shopping_cart.mapping.delete
     def remove_from_shopping_cart(self, request, pk):
         added_to_cart_recipe = get_object_or_404(Recipe, id=pk)
@@ -112,7 +109,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
             user=request.user
         ).delete()
         return Response(self.get_serializer(added_to_cart_recipe).data)
-    
+
     @action(detail=False,)
     def download_shopping_cart(self, request):
         ingredients = IngredientRecipe.objects.filter(
