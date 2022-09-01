@@ -1,9 +1,26 @@
 from django.contrib.auth.hashers import make_password
-from djoser.serializers import UserSerializer
+from djoser.serializers import UserSerializer, SetPasswordSerializer
 from drf_extra_fields.fields import Base64ImageField
 from recipes.models import Recipe
 from rest_framework import serializers
 from users.models import Follow, User
+
+
+class CustomSetPasswordSerializer(SetPasswordSerializer):
+    """Сериалайзер пользователей."""
+    is_subsсribed = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = (
+            'current_password',
+            'new_password'
+        )
+
+    def update(self, instance, validated_data):
+        instance.set_password(validated_data['new_password'])
+        instance.save()
+        return instance
 
 
 class RecipeFollowSerializer(serializers.ModelSerializer):
@@ -44,7 +61,7 @@ class CustomUserSerializer(UserSerializer):
         return super(CustomUserSerializer, self).create(validated_data)
 
     def update(self, instance, validated_data):
-        instance.set_password(validated_data['password'])
+        instance.set_password(validated_data['new_password'])
         instance.save()
         return instance
 
