@@ -4,18 +4,18 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from .models import Follow, User
-from .serializers import FollowSerializer, FollowUserSerializer, UserSerializer
+from .serializers import FollowSerializer, FollowUserSerializer, CustomUserSerializer
 
 
 class CustomUserViewSet(UserViewSet):
     """Вьюсет пользователей."""
     queryset = User.objects.all()
-    serializer_class = UserSerializer
+    serializer_class = CustomUserSerializer
 
     def get_serializer_class(self):
         if self.action == 'subscriptions' or self.action == 'subscribe':
             return FollowSerializer
-        return UserSerializer
+        return CustomUserSerializer
 
     @action(detail=False)
     def subscriptions(self, request):

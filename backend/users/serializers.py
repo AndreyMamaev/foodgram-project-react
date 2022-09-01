@@ -1,3 +1,4 @@
+from djoser.serializers import UserSerializer
 from drf_extra_fields.fields import Base64ImageField
 from recipes.models import Recipe
 from rest_framework import serializers
@@ -13,7 +14,7 @@ class RecipeFollowSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'image', 'cooking_time')
 
 
-class UserSerializer(serializers.ModelSerializer):
+class CustomUserSerializer(UserSerializer):
     """Сериалайзер пользователей."""
     is_subsсribed = serializers.SerializerMethodField()
 
@@ -36,7 +37,7 @@ class UserSerializer(serializers.ModelSerializer):
         return Follow.objects.filter(user=request.user, author=obj).exists()
 
 
-class FollowUserSerializer(UserSerializer):
+class FollowUserSerializer(CustomUserSerializer):
     """Сериалайзер пользователей в подписках."""
     recipes = RecipeFollowSerializer(many=True, read_only=True)
     recipes_count = serializers.SerializerMethodField()
@@ -57,7 +58,7 @@ class FollowUserSerializer(UserSerializer):
         return Recipe.objects.filter(author=obj).count()
 
 
-class FollowSerializer(UserSerializer):
+class FollowSerializer(CustomUserSerializer):
     """Сериалайзер подписок."""
 
     class Meta:
