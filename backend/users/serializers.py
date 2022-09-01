@@ -16,8 +16,8 @@ class CustomSetPasswordSerializer(SetPasswordSerializer):
             'new_password'
         )
         extra_kwargs = {
-            'username': {'required': True},
-            'email': {'required': True}
+            'username': {'required': False},
+            'email': {'required': False}
         }
 
 
