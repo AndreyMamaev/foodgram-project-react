@@ -15,6 +15,10 @@ class CustomSetPasswordSerializer(SetPasswordSerializer):
             'current_password',
             'new_password'
         )
+        extra_kwargs = {
+            'username': {'required': True},
+            'email': {'required': True}
+        }
 
 
 class RecipeFollowSerializer(serializers.ModelSerializer):
