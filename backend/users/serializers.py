@@ -1,4 +1,5 @@
 from drf_extra_fields.fields import Base64ImageField
+from django.contrib.auth.hashers import make_password
 from recipes.models import Recipe
 from rest_framework import serializers
 from users.models import Follow, User
@@ -28,6 +29,17 @@ class UserSerializer(serializers.ModelSerializer):
             'password': {'required': False, 'write_only': True},
             'email': {'required': True}
         }
+
+    def create(self, validated_data):
+        validated_data['password'] = make_password(
+            validated_data.get('password')
+        )
+        return super(UserSerializer, self).create(validated_data)
+
+    def update(self, instance, validated_data):
+        instance.set_password(validated_data['password'])
+        instance.save()
+        return instance
 
     def get_is_subsсribed(self, obj):
         request = self.context.get('request')
