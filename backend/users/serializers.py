@@ -1,3 +1,4 @@
+from django.contrib.auth.hashers import make_password
 from djoser.serializers import UserSerializer
 from drf_extra_fields.fields import Base64ImageField
 from recipes.models import Recipe
@@ -35,6 +36,17 @@ class CustomUserSerializer(UserSerializer):
         if request is None or request.user.is_anonymous:
             return False
         return Follow.objects.filter(user=request.user, author=obj).exists()
+
+    def create(self, validated_data):
+        validated_data['password'] = make_password(
+            validated_data.get('password')
+        )
+        return super(CustomUserSerializer, self).create(validated_data)
+
+    def update(self, instance, validated_data):
+        instance.set_password(validated_data['password'])
+        instance.save()
+        return instance
 
 
 class FollowUserSerializer(CustomUserSerializer):
