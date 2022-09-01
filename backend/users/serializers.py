@@ -1,3 +1,4 @@
+from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.hashers import make_password
 from drf_extra_fields.fields import Base64ImageField
 from recipes.models import Recipe
@@ -34,7 +35,7 @@ class UserSerializer(serializers.ModelSerializer):
         validated_data['password'] = make_password(
             validated_data.get('password')
         )
-        return super(UserSerializer, self).create(validated_data)
+        return super(UserCreationForm, self).create(validated_data)
 
     def update(self, instance, validated_data):
         instance.set_password(validated_data['password'])
