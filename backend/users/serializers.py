@@ -8,7 +8,6 @@ from users.models import Follow, User
 
 class CustomSetPasswordSerializer(SetPasswordSerializer):
     """Сериалайзер пользователей."""
-    is_subsсribed = serializers.SerializerMethodField()
 
     class Meta:
         model = User
@@ -16,11 +15,6 @@ class CustomSetPasswordSerializer(SetPasswordSerializer):
             'current_password',
             'new_password'
         )
-
-    def update(self, instance, validated_data):
-        instance.set_password(validated_data['new_password'])
-        instance.save()
-        return instance
 
 
 class RecipeFollowSerializer(serializers.ModelSerializer):
