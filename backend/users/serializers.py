@@ -1,5 +1,5 @@
-from drf_extra_fields.fields import Base64ImageField
 from django.contrib.auth.hashers import make_password
+from drf_extra_fields.fields import Base64ImageField
 from recipes.models import Recipe
 from rest_framework import serializers
 from users.models import Follow, User
