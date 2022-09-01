@@ -4,10 +4,8 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from .models import Follow, User
-from .serializers import (
-    CustomUserSerializer, FollowSerializer,
-    FollowUserSerializer, CustomSetPasswordSerializer
-)
+from .serializers import (CustomSetPasswordSerializer, CustomUserSerializer,
+                          FollowSerializer, FollowUserSerializer)
 
 
 class CustomUserViewSet(UserViewSet):
