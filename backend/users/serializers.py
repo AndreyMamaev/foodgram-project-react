@@ -1,9 +1,20 @@
-from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.hashers import make_password
+from djoser.serializers import UserCreateSerializer
 from drf_extra_fields.fields import Base64ImageField
 from recipes.models import Recipe
 from rest_framework import serializers
 from users.models import Follow, User
+
+
+class CustomUserCreateSerializer(UserCreateSerializer):
+    """Сериализатор для регистрации пользователей."""
+
+    class Meta:
+        model = User
+        fields = (
+            'email', 'id', 'username', 'first_name',
+            'last_name', 'is_subsсribed'
+        )
+        extra_kwargs = {'password': {'write_only': True}}
 
 
 class RecipeFollowSerializer(serializers.ModelSerializer):
@@ -30,17 +41,6 @@ class UserSerializer(serializers.ModelSerializer):
             'password': {'required': True, 'write_only': True},
             'email': {'required': True}
         }
-
-    def create(self, validated_data):
-        validated_data['password'] = make_password(
-            validated_data.get('password')
-        )
-        return super(UserCreationForm, self).create(validated_data)
-
-    def update(self, instance, validated_data):
-        instance.set_password(validated_data['password'])
-        instance.save()
-        return instance
 
     def get_is_subsсribed(self, obj):
         request = self.context.get('request')
