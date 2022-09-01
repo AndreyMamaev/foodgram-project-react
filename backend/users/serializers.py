@@ -25,7 +25,7 @@ class UserSerializer(serializers.ModelSerializer):
         )
         lookup_field = ('username',)
         extra_kwargs = {
-            'password': {'required': False},
+            'password': {'required': False, 'write_only': True},
             'email': {'required': True}
         }
 
