@@ -4,7 +4,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from .models import Follow, User
-from .serializers import (CustomSetPasswordSerializer, CustomUserSerializer,
+from .serializers import (CustomUserSerializer,
                           FollowSerializer, FollowUserSerializer)
 
 
@@ -12,13 +12,6 @@ class CustomUserViewSet(UserViewSet):
     """Вьюсет пользователей."""
     queryset = User.objects.all()
     serializer_class = CustomUserSerializer
-
-    def get_serializer_class(self):
-        if self.action == 'subscriptions' or self.action == 'subscribe':
-            return FollowSerializer
-        elif self.action == 'set_password':
-            return CustomSetPasswordSerializer
-        return CustomUserSerializer
 
     @action(detail=False)
     def subscriptions(self, request):
@@ -35,7 +28,7 @@ class CustomUserViewSet(UserViewSet):
     def subscribe(self, request, id):
         author = get_object_or_404(User, id=id)
         data = {'author': id, 'user': request.user.id}
-        serializer = self.get_serializer(
+        serializer = FollowSerializer(
             data=data,
             context={'request': request}
         )
