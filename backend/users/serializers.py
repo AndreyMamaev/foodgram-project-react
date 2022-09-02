@@ -1,4 +1,3 @@
-from django.contrib.auth.hashers import make_password
 from djoser.serializers import UserSerializer
 from drf_extra_fields.fields import Base64ImageField
 from recipes.models import Recipe
