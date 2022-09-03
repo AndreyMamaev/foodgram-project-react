@@ -16,7 +16,7 @@ class RecipeFollowSerializer(serializers.ModelSerializer):
 
 class CustomUserSerializer(UserSerializer):
     """Сериалайзер пользователей."""
-    is_subscribed = serializers.SerializerMethodField()
+    is_subsсribed = serializers.SerializerMethodField()
 
     class Meta:
         model = User
