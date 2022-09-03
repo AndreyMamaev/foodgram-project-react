@@ -59,7 +59,9 @@ class FollowUserSerializer(CustomUserSerializer):
 
     def get_recipes(self, obj):
         limit = self.context.get('recipes_limit')
+        print('limit: ', limit)
         recipes = obj.recipes.all()[:limit]
+        print('recipes: ', recipes)
         return RecipeFollowSerializer(
             recipes, many=True, read_only=True
         ).data
