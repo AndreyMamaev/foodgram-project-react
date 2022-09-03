@@ -2,7 +2,7 @@ FROM python:3.9.6
 
 WORKDIR /app
 
-COPY ../ .
+COPY /backend .
 
 WORKDIR /app/backend
 
