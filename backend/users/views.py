@@ -1,5 +1,6 @@
 from django.shortcuts import get_object_or_404
 from djoser.views import UserViewSet
+from rest.framework import status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
@@ -35,7 +36,8 @@ class CustomUserViewSet(UserViewSet):
         serializer.is_valid(raise_exception=True)
         Follow.objects.create(author=author, user=request.user)
         return Response(FollowUserSerializer(
-            author, context={'request': request}
+            author, context={'request': request},
+            status=status.HTTP_201_CREATED
         ).data)
 
     @subscribe.mapping.delete
@@ -49,5 +51,6 @@ class CustomUserViewSet(UserViewSet):
         serializer.is_valid(raise_exception=True)
         get_object_or_404(Follow, author=author, user=request.user).delete()
         return Response(FollowUserSerializer(
-            author, context={'request': request}
+            author, context={'request': request},
+            status=status.HTTP_204_NO_CONTENT
         ).data)
