@@ -2,9 +2,7 @@ FROM python:3.9.6
 
 WORKDIR /app
 
-COPY ../ .
-
-WORKDIR /app/backend
+COPY . .
 
 RUN python -m pip install --upgrade pip
 

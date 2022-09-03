@@ -16,6 +16,9 @@ class Ingredient(models.Model):
     class Meta:
         verbose_name = 'Ингредиент'
         verbose_name_plural = 'Ингредиенты'
+    
+    def __str__(self):
+        return self.name[:15]
 
 
 class Tag(models.Model):
@@ -32,6 +35,9 @@ class Tag(models.Model):
     class Meta:
         verbose_name = 'Тэг'
         verbose_name_plural = 'Тэги'
+    
+    def __str__(self):
+        return self.name[:15]
 
 
 class Recipe(models.Model):
@@ -76,7 +82,7 @@ class Recipe(models.Model):
         ordering = ['-pub_date']
 
     def __str__(self):
-        return self.text[:15]
+        return self.name[:15]
 
 
 class IngredientRecipe(models.Model):
@@ -102,6 +108,9 @@ class IngredientRecipe(models.Model):
                 fields=['ingredient', 'recipe'], name='unique ingredient'
             )
         ]
+    
+    def __str__(self):
+        return self.recipe.name[:15]
 
 
 class TagRecipe(models.Model):
@@ -116,6 +125,9 @@ class TagRecipe(models.Model):
                 fields=['tag', 'recipe'], name='unique tag'
             )
         ]
+    
+    def __str__(self):
+        return self.recipe.name[:15]
 
 
 class Favorite(models.Model):
@@ -143,6 +155,9 @@ class Favorite(models.Model):
             )
         ]
 
+    def __str__(self):
+        return self.user.username[:15]
+
 
 class Cart(models.Model):
     user = models.ForeignKey(
@@ -168,3 +183,6 @@ class Cart(models.Model):
                 fields=['user', 'added_to_cart_recipe'], name='unique cart'
             )
         ]
+
+    def __str__(self):
+        return self.user.username[:15]
