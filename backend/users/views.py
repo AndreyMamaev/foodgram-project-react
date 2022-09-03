@@ -49,6 +49,6 @@ class CustomUserViewSet(UserViewSet):
         )
         serializer.is_valid(raise_exception=True)
         get_object_or_404(Follow, author=author, user=request.user).delete()
-        return Response(FollowUserSerializer(
-            author, context={'request': request}
-        ).data, status=status.HTTP_204_NO_CONTENT)
+        return Response(
+            status=status.HTTP_204_NO_CONTENT
+        )
