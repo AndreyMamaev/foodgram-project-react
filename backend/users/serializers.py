@@ -84,16 +84,16 @@ class FollowSerializer(CustomUserSerializer):
         user = data.get('user')
         if user == author:
             raise serializers.ValidationError(
-                {'error': 'Нельзя подписаться на самого себя!'}
+                {"error": "Нельзя подписаться на самого себя!"}
             )
         exist = Follow.objects.filter(author=author, user=user).exists()
         request = self.context.get('request')
         if request.method == 'POST' and exist:
             raise serializers.ValidationError(
-                {'error': 'Вы уже подписаны на автора!'}
+                {"error": "Вы уже подписаны на автора!"}
             )
         if request.method == 'DELETE' and not exist:
             raise serializers.ValidationError(
-                {'error': 'Вы не подписаны на автора!'}
+                {"error": "Вы не подписаны на автора!"}
                 )
         return data
