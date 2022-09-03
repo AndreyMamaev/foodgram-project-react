@@ -58,16 +58,11 @@ class FollowUserSerializer(CustomUserSerializer):
         return Recipe.objects.filter(author=obj).count()
 
     def get_recipes(self, obj):
-        print('self:', self)
         request = self.context.get('request')
         recipes = obj.recipes.all()
-        limit = self.query_params.get('recipes_limit')
-        print('limit: ', limit)
-        print('recipes: ', recipes)
+        limit = request.GET.get('recipes_limit')
         if limit:
-            print('limit: ', limit)
             recipes = obj.recipes.all()[:limit]
-            print('recipes: ', recipes)
         return RecipeFollowSerializer(
             recipes, many=True, read_only=True,
             context={'request': request}
