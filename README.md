@@ -1,5 +1,12 @@
 # Проект FoodGram
 
+Проект запущен по адресу http://158.160.9.204
+
+Логин администратора: mamaev.andrey@mail.ru
+Пароль администратора: admin
+
+![workflow](https://github.com/AndreyMamaev/foodgram-project-react/actions/workflows/main.yml/badge.svg)
+
 ## Описание
 
 Данный проект представляет собой онлайн-сервис "Продуктовый помошник", в котором реализованы следующие **возможности**:
@@ -15,7 +22,9 @@
 
 - Django
 - Django DRF
-- SQLite
+- PostgreSQL
+- Docker
+- Nginx
 
 ## Как запустить проект
 
@@ -23,27 +32,30 @@
 
 ```git clone git@github.com:AndreyMamaev/foodgram-project-react.git```
 
-Cоздать и активировать виртуальное окружение:
+Создать файл .env, в котором необходимо создать переменные:
 
-```python -m venv env```
+- DB_ENGINE
+- DB_NAME
+- POSTGRES_USER
+- POSTGRES_PASSWORD
+- DB_HOST
+- DB_PORT
+- SECRET_KEY
+- HOST
 
-```venv/scripts/activate```
+```cd infra```
 
-```python -m pip install --upgrade pip```
+Cоздать образ и контейнеры:
 
-Установить зависимости из файла requirements.txt:
+```docker-compose up```
 
-```pip install -r requirements.txt```
+```docker-compose exec web python manage.py migrate```
 
-Выполнить миграции:
+```docker-compose exec web python manage.py collectstatic --no-input```
 
-```cd backend/```
+Наполнить базу данными из файла с фикстурами:
 
-```python manage.py migrate```
-
-Запустить проект:
-
-```python manage.py runserver```
+```docker-compose exec web python manage.py loaddata fixtures.json```
 
 ## Примеры запросов к API
 
@@ -133,6 +145,8 @@ POST ```/api/recipes/```
 
 Ответ:
 Аналогично запросу GET ```/api/recipes/{recipe_id}/```
+
+## Документация представлена [здесь](http://158.160.9.204/api/docs/)
 
 ## Авторы:
 
