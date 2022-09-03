@@ -62,7 +62,7 @@ class FollowUserSerializer(CustomUserSerializer):
         recipes = obj.recipes.all()
         limit = request.GET.get('recipes_limit')
         if limit:
-            recipes = obj.recipes.all()[:limit]
+            recipes = obj.recipes.all()[:int(limit)]
         return RecipeFollowSerializer(
             recipes, many=True, read_only=True,
             context={'request': request}
