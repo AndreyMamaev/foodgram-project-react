@@ -16,7 +16,7 @@ class RecipeFollowSerializer(serializers.ModelSerializer):
 
 class CustomUserSerializer(UserSerializer):
     """Сериалайзер пользователей."""
-    is_subsсribed = serializers.SerializerMethodField()
+    is_subscribed = serializers.SerializerMethodField()
 
     class Meta:
         model = User
@@ -95,5 +95,5 @@ class FollowSerializer(CustomUserSerializer):
         if request.method == 'DELETE' and not exist:
             raise serializers.ValidationError(
                 'Вы не подписаны на автора!'
-                )
+            )
         return data
