@@ -16,7 +16,7 @@ class RecipeFollowSerializer(serializers.ModelSerializer):
 
 class CustomUserSerializer(UserSerializer):
     """Сериалайзер пользователей."""
-    is_subsсribed = serializers.SerializerMethodField()
+    is_subscribed = serializers.SerializerMethodField()
 
     class Meta:
         model = User
@@ -84,16 +84,16 @@ class FollowSerializer(CustomUserSerializer):
         user = data.get('user')
         if user == author:
             raise serializers.ValidationError(
-                'Нельзя подписаться на самого себя!'
+                {'error': 'Нельзя подписаться на самого себя!'}
             )
         exist = Follow.objects.filter(author=author, user=user).exists()
         request = self.context.get('request')
         if request.method == 'POST' and exist:
             raise serializers.ValidationError(
-                'Вы уже подписаны на автора!'
+                {'error': 'Вы уже подписаны на автора!'}
             )
         if request.method == 'DELETE' and not exist:
             raise serializers.ValidationError(
-                'Вы не подписаны на автора!'
+                {'error': 'Вы не подписаны на автора!'}
                 )
         return data
