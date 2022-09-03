@@ -16,13 +16,13 @@ class RecipeFollowSerializer(serializers.ModelSerializer):
 
 class CustomUserSerializer(UserSerializer):
     """Сериалайзер пользователей."""
-    is_subsсribed = serializers.SerializerMethodField()
+    is_subscribed = serializers.SerializerMethodField()
 
     class Meta:
         model = User
         fields = (
             'email', 'id', 'username', 'first_name',
-            'last_name', 'is_subsсribed', 'password'
+            'last_name', 'is_subscribed', 'password'
         )
         lookup_field = ('username',)
         extra_kwargs = {
@@ -30,7 +30,7 @@ class CustomUserSerializer(UserSerializer):
             'email': {'required': True}
         }
 
-    def get_is_subsсribed(self, obj):
+    def get_is_subscribed(self, obj):
         request = self.context.get('request')
         if request is None or request.user.is_anonymous:
             return False
@@ -46,7 +46,7 @@ class FollowUserSerializer(CustomUserSerializer):
         model = User
         fields = (
             'email', 'id', 'username', 'first_name', 'last_name',
-            'is_subsсribed', 'recipes', 'recipes_count'
+            'is_subscribed', 'recipes', 'recipes_count'
         )
         lookup_field = ('username',)
         extra_kwargs = {
