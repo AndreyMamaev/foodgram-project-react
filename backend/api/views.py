@@ -8,7 +8,7 @@ from rest_framework import permissions, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from .filters import RecipeFilter
+from .filters import IngredientFilter, RecipeFilter
 from .mixins import RetrieveListViewSet
 from .permissions import IsAuthorOrReadOnly
 from .serializers import (CartSerializer, FavoriteSerializer,
@@ -22,7 +22,7 @@ class IngredientViewSet(RetrieveListViewSet):
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
     filter_backends = (DjangoFilterBackend,)
-    filterset_fields = ('^name',)
+    filterset_class = IngredientFilter
     pagination_class = None
 
 
