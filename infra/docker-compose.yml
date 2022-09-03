@@ -23,11 +23,11 @@ services:
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf
       - ../frontend/build:/usr/share/nginx/html/
-      - ../docs/:/usr/share/nginx/html/api/docs/
+      - docs/:/usr/share/nginx/html/api/docs/
       - static_value:/var/html/static/
       - media_value:/var/html/media/
     depends_on:
-      - web
+      - frontend
 
   web:
     image: drewnya/foodgram_backend:latest
@@ -35,11 +35,13 @@ services:
     volumes:
       - static_value:/app/static/
       - media_value:/app/media/
+      - docs:/app/docs/
     depends_on:
       - db
     env_file:
       - ./.env
 
 volumes:
+  docs:
   static_value:
   media_value:

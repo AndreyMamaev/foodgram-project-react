@@ -2,7 +2,7 @@ from drf_extra_fields.fields import Base64ImageField
 from recipes.models import (Cart, Favorite, Ingredient, IngredientRecipe,
                             Recipe, Tag, TagRecipe)
 from rest_framework import serializers
-from users.serializers import UserSerializer
+from users.serializers import CustomUserSerializer
 
 
 class IngredientSerializer(serializers.ModelSerializer):
@@ -40,7 +40,7 @@ class TagSerializer(serializers.ModelSerializer):
 
 class RecipeSerializer(serializers.ModelSerializer):
     """Сериалайзер рецептов."""
-    author = UserSerializer(many=False, read_only=True)
+    author = CustomUserSerializer(many=False, read_only=True)
     tags = TagSerializer(many=True, read_only=True)
     ingredients = serializers.SerializerMethodField()
     is_favorited = serializers.SerializerMethodField()
@@ -139,7 +139,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         return data
 
 
-class FavoriteSerializer(UserSerializer):
+class FavoriteSerializer(CustomUserSerializer):
     """Сериалайзер избранного."""
 
     class Meta:
@@ -167,7 +167,7 @@ class FavoriteSerializer(UserSerializer):
         return data
 
 
-class CartSerializer(UserSerializer):
+class CartSerializer(CustomUserSerializer):
     """Сериалайзер корзины."""
 
     class Meta:
