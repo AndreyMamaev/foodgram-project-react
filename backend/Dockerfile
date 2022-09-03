@@ -2,7 +2,7 @@ FROM python:3.9.6
 
 WORKDIR /app
 
-COPY . .
+COPY . ./
 
 RUN python -m pip install --upgrade pip
 
