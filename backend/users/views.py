@@ -36,9 +36,8 @@ class CustomUserViewSet(UserViewSet):
         serializer.is_valid(raise_exception=True)
         Follow.objects.create(author=author, user=request.user)
         return Response(FollowUserSerializer(
-            author, context={'request': request},
-            status=status.HTTP_201_CREATED
-        ).data)
+            author, context={'request': request}
+        ).data, status=status.HTTP_201_CREATED)
 
     @subscribe.mapping.delete
     def unsubscribe(self, request, id):
@@ -51,6 +50,5 @@ class CustomUserViewSet(UserViewSet):
         serializer.is_valid(raise_exception=True)
         get_object_or_404(Follow, author=author, user=request.user).delete()
         return Response(FollowUserSerializer(
-            author, context={'request': request},
-            status=status.HTTP_204_NO_CONTENT
-        ).data)
+            author, context={'request': request}
+        ).data, status=status.HTTP_204_NO_CONTENT)
