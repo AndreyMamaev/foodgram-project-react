@@ -1,8 +1,7 @@
-from django.core.exceptions import ValidationError
 from djoser.serializers import UserSerializer
 from drf_extra_fields.fields import Base64ImageField
 from recipes.models import Recipe
-from rest_framework import serializers
+from rest_framework import serializers, status
 from users.models import Follow, User
 
 
@@ -84,17 +83,17 @@ class FollowSerializer(CustomUserSerializer):
         author = data.get('author')
         user = data.get('user')
         if user == author:
-            raise ValidationError(
-                {"error": "Нельзя подписаться на самого себя!"}
-            )
+            raise serializers.ValidationError({
+                'errors': 'Нельзя подписаться на самого себя!'
+            }, code=status.HTTP_400_BAD_REQUEST)
         exist = Follow.objects.filter(author=author, user=user).exists()
         request = self.context.get('request')
         if request.method == 'POST' and exist:
-            raise ValidationError(
-                {"error": "Вы уже подписаны на автора!"}
-            )
+            raise serializers.ValidationError({
+                'errors': 'Вы уже подписаны на автора!'
+            }, code=status.HTTP_400_BAD_REQUEST)
         if request.method == 'DELETE' and not exist:
-            raise ValidationError(
-                {"error": "Вы не подписаны на автора!"}
-            )
+            raise serializers.ValidationError({
+                'errors': 'Вы не подписаны на автора!'
+            }, code=status.HTTP_400_BAD_REQUEST)
         return data
