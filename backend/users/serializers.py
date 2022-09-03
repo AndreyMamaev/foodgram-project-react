@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from djoser.serializers import UserSerializer
 from drf_extra_fields.fields import Base64ImageField
 from recipes.models import Recipe
@@ -83,17 +84,17 @@ class FollowSerializer(CustomUserSerializer):
         author = data.get('author')
         user = data.get('user')
         if user == author:
-            raise serializers.ValidationError(
+            raise ValidationError(
                 {"error": "Нельзя подписаться на самого себя!"}
             )
         exist = Follow.objects.filter(author=author, user=user).exists()
         request = self.context.get('request')
         if request.method == 'POST' and exist:
-            raise serializers.ValidationError(
+            raise ValidationError(
                 {"error": "Вы уже подписаны на автора!"}
             )
         if request.method == 'DELETE' and not exist:
-            raise serializers.ValidationError(
+            raise ValidationError(
                 {"error": "Вы не подписаны на автора!"}
-                )
+            )
         return data
