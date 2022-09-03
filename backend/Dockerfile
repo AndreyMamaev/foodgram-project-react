@@ -2,10 +2,12 @@ FROM python:3.9.6
 
 WORKDIR /app
 
-COPY . .
+COPY ../ .
+
+WORKDIR /app/backend
 
 RUN python -m pip install --upgrade pip
 
-RUN pip3 install -r backend/requirements.txt --no-cache-dir
+RUN pip3 install -r requirements.txt --no-cache-dir
 
-CMD ["gunicorn", "backend/backend.wsgi:application", "--bind", "0:8000" ] 
+CMD ["gunicorn", "backend.wsgi:application", "--bind", "0:8000" ] 
