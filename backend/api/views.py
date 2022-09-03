@@ -10,7 +10,6 @@ from rest_framework.response import Response
 
 from .filters import IngredientFilter, RecipeFilter
 from .mixins import RetrieveListViewSet
-from .paginations import LimitPagination
 from .permissions import IsAuthorOrReadOnly
 from .serializers import (CartSerializer, FavoriteSerializer,
                           IngredientSerializer, RecipeSerializer,
@@ -45,7 +44,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
     serializer_class = RecipeSerializer
     filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeFilter
-    pagination_class = LimitPagination
 
     @action(detail=True, methods=['POST', ])
     def favorite(self, request, pk):
